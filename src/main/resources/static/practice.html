@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Title</title>
+  <script type="text/javascript" src="js/vue.global.3.2.39.js"></script>
+</head>
+<body>
+   账号：<input type="text" name="account" v-model="account"><br>
+      密码：<input type="text" name="password" v-model="password"><br>
+      男<input type="radio" name="sex" :value="0"  v-model="sex">       女<input type="radio" name="sex" :value="1" v-model="sex"><br>
+   爱好：<input type="checkbox" name="hobby" :value="1" v-model="hobby">游泳
+             <input type="checkbox" name="hobby" :value="2" v-model="hobby">爬山
+            <input type="checkbox" name="hobby" :value="3" v-model="hobby">打游戏<br>
+   专业：<select name="subject" v-model="subject">
+     <option :value="0" >请选择</option>
+     <option :value="1">数学</option>
+     <option :value="2">语文</option>
+     <option :value="3">科学</option>
+   </select>
+     <br>
+   <hr>
+     单价：<input type="text" name="price" v-model="price">
+     数量：<input type="text" name="number" v-model="number">
+     总价：{{totalPrice()}}
+     <br>
+     代办事项：<input type="text"  v-model="item"><button @click="add">添加</button>
+     <h3>代办事项列表</h3>
+       <ul>
+  <li v-for="obj in items"> {{obj}} </li>
+       </ul>
+
+
+
+      <script>
+        //定义一个js对象，该对象按照vue提供各种属性
+        const options={
+          //data函数
+              data:function () {
+                  //返回对象就是model对象
+                return{
+                  //该对象中包含了要显示的数据
+                  item:'',
+                  items:[],
+                  price:'',
+                  number:'',
+                  account:'',
+                  password:'',
+                  msg:'hello!',
+                  sex:'1',
+                  hobby:[],
+                  subject:'1'
+                }
+              },
+          methods:{
+            totalPrice: function (){
+                 var p=this.price
+                 var result=0;
+                 if(p&&this.number>0){
+                   result=(p*this.number).toFixed(2)
+                 }
+                 return result;
+
+                },
+            add(){
+                var input=this.item.trim();
+                if(input!=null){
+                  this.items.push(this.item)
+                  this.item="";
+                }
+            }
+          }
+
+
+
+        };
+        //创建应用实例，将刚刚创建的选项对象作为参数传入
+        var app=Vue.createApp(options);
+        //挂在到网页中的dom节点，该方法返回的就是viewmodel对象
+        var vm=app.mount("#div1")
+
+      </script>
+
+</body>
+</html>

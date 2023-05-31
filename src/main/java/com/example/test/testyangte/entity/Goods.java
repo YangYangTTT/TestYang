@@ -5,15 +5,13 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import javax.persistence.*;
+
 
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table
 public class Goods {
-    @Column(name="goodsid")
     private Integer goodsid;
     private String goodsname;
     private  Double price;

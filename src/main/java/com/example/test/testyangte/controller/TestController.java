@@ -5,8 +5,6 @@ import com.example.test.testyangte.common.AjaxResp;
 import com.example.test.testyangte.entity.*;
 import com.example.test.testyangte.service.TestService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.annotations.Many;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Controller;
@@ -90,9 +88,10 @@ public class TestController {
     }
     //----------------------------------------------------------------------mybatis-plus----------------------------------------------------------------------
     //查询
-    public  AjaxResp Select(PageParam pageParam){
-        PageInfo <Goods>pageInfo2=this.testService.Select(pageParam);
-      return null;
 
+    public PageInfo<Goods> Select(PageParam pageParam){
+        PageInfo <Goods>pageInfo2=this.testService.Select(pageParam);
+        return  pageInfo2;
     }
+
 }

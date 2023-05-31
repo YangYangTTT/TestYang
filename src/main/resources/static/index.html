@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="./js/element-plus.index.css">
+    <script type="text/javascript" src="./js/vue.global.3.2.39.js"></script>
+    <script type="text/javascript" src="./js/element-plus.2.2.15.js"></script>
+    <script type="text/javascript" src="./js/element_plus_icons.2.0.9.js"></script>
+    <script type="text/javascript" src="./js/axios.min.0.24.0.js"></script>
+</head>
+<body>
+    <div id="app">
+
+        <el-row>
+            <el-col :span="24">
+
+                <el-button type="warning" @click="batchDelete">批量删除</el-button>
+                <el-table ref="myTable" :data="SaliDetails" :border="true" :stripe="true" size="small">
+                    <el-table-column width="80" label="" type="selection"></el-table-column>
+                    <el-table-column width="80" prop="saleNo" label="商品单号"></el-table-column>
+                    <el-table-column width="80" prop="Good.name" label="商品名字"></el-table-column>
+                    <el-table-column width="120" prop="Good.price" label="商品价格"></el-table-column>
+                    <el-table-column width="130" prop="number" label="商品数量"></el-table-column>
+                    <el-table-column width="120" prop="subTotal" label="小计"></el-table-column>
+               <!--     <el-table-column width="150" label="">
+                        <template #default="scope">
+                            {{formatDate(scope.row.lastModified)}}
+                        </template>
+                    </el-table-column>-->
+                    <el-table-column>
+                        <template #default="scope" label="操作">
+                            <el-button type="danger" @click="deleteEmployee(scope.row.id,scope.row.id)">删除</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                </el-col>
+            </el-row>
+                <br>
+        <el-row>
+            <el-col :span="24">
+                <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange"
+                               v-model:current-page="currentPage" v-model:page-size="pageSize"
+                               :total="total"
+                               :page-sizes="pageSizes"
+                               layout="->,total, sizes, prev, pager, next, jumper, slot" >
+                </el-pagination>
+            </el-col>
+        </el-row>
+        <hr>
+
+
+        <el-row>
+            <el-col :span="24">
+                    <el-form :model="Good"   label-width="110px" ref="myForm">
+                        <el-row>
+                            <el-col :span="3">
+                                <el-form-item label="商品编号:" prop="id">
+                                    <el-input v-model="Good.id"></el-input>
+                                </el-form-item>
+                            </el-col>
+                         <!-- <el-col :span="5">
+                              <el-form-item label="请选择:" >
+                              <el-select v-model="Good.name" >
+                                  <el-option :value="0" label="请选择"></el-option>
+                                  <el-option v-for="Good in SaleDetails.Good" :value="Good.name" :label="Good.name"></el-option>
+                              </el-select>
+                              </el-form-item>
+                            </el-col>-->
+                            <el-col :span="5">
+                                <el-form-item label="单价:" prop="price">
+                                    <el-input v-model="Good.price" ></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="5">
+                                <el-form-item label="数量:" prop="number">
+                                    <el-input v-model="Good.number"></el-input>
+                                </el-form-item>
+                            </el-col>
+                         <!--   <el-col :span="9">
+                                <el-form-item label="日期:" prop="lastModified">
+                                    <el-input v-model="questions.lastModified"></el-input>
+                                </el-form-item>
+                            </el-col>-->
+
+                            <el-col :span="5">
+                                <el-form-item label="小计:" prop="subTotal">
+                                    <el-input v-model="Good.subTotal"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-row>
+                                <el-col :span="6">
+                                    <el-form-item label="">
+                                        <el-button type="primary" @click="input">保存</el-button>
+                                    </el-form-item>
+                                </el-col>
+                            </el-row>
+                        </el-row>
+        </el-form>
+                </el-col>
+            </el-row>
+        <hr>
+        <el-row>
+
+        <el-col :span="6">
+                <el-button type="primary"  style="text-align: center"@click="count">统计销量</el-button>
+        </el-col>
+            <el-col :span="4">
+                <el-table ref="myTable" :data="count" :border="true" :stripe="true" size="small">
+                    <el-table-column width="80" prop="name" label="商品名称"></el-table-column>
+                    <el-table-column width="80" prop="count" label="数量"></el-table-column>
+            </el-col>
+        </el-row>
+
+    </div>
+    <script type="text/javascript">
+        axios.defaults.baseURL="http://localhost:8080";
+        axios.defaults.timeout=4000;
+
+        const options={
+          data(){
+              return {
+                  SaliDetails: [],
+                  currentPage: 1,
+                  pageSize: 5,
+                  pageSizes: [10, 15, 20, 25],
+                  total: 0,
+                  count:[],
+                  Good :{
+                      id:'',
+                      number :'',
+                      subTotal:'',
+                          name:'',
+                          price:''
+                      }
+                  }
+
+          },
+            methods:{
+                      //加载信息的方法
+                //查询人员列表
+                LoadList(){
+                    //将当前页 每页多少调数据以及搜索条件放在data里面
+                    let Data={};
+                    Data.searchKey=this.searchKey;
+                    Data.pageSize=this.pageSize;
+                    Data.currentPage=this.currentPage;
+                    //发送请求
+                    axios.get("/list",{params:Data}).then(resp=>{
+                        if(resp.status==200){
+                            if(resp.data.code==0){
+                                this.SaliDetails=resp.data.data.list;
+                                this.total=resp.data.data.total;
+                            }
+                        }
+                    })
+
+                },
+                handleSizeChange: function () {
+                    this.LoadList();
+                },
+                handleCurrentChange: function () {
+                    this.LoadList();
+                },
+                //删除信息
+                deleteEmployee:function (id,saleNo){
+                    axios.get("/delete",{params:{id:id,saleNo:saleNo}}).then(resp=>{
+                        if(resp.status==200){
+                            ElementPlus.ElMessage({type:'success',message:"删除成功"})
+                            this.LoadList();
+                        }
+                    })
+                },
+                //录入信息
+                input:function (){
+                    this.SaleDetail.subTotal= ( this.SaleDetail.number *  this.SaleDetail.price).toFixed(2);
+                         axios.post("/input",this.SaleDetail).then(resp=>{
+                           if(resp.status==200){
+                                ElementPlus.ElMessage({message: "录入成功!", type: 'success'});
+                                this.LoadList();
+                            }else{
+                                ElementPlus.ElMessage({message: "录入失败", type: 'danger'});
+                            }
+
+                         })
+                },
+
+                //统计销量
+                count:function (){
+                      axios.get("/count").then(resp=>{
+                          if(resp.status==200){
+                           this.count=resp.data.data;
+                          }
+                      })
+                }
+
+        },
+            created(){
+                this.LoadList();
+            },
+
+        };
+        const app=Vue.createApp(options);
+        app.use(ElementPlus);
+        for(const [iconName,iconComp] of Object.entries(ElementPlusIconsVue)){
+            if(iconName=='Menu'){
+                app.component('IconMenu',iconComp);
+            }else{
+                app.component(iconName,iconComp);
+            }
+        }
+        const vm=app.mount("#app");
+    </script>
+</body>
+</html>

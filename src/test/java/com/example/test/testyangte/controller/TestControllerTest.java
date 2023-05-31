@@ -27,39 +27,38 @@ public class TestControllerTest {
 @Autowired
 private TestService testService;
     @Autowired
-    private  TestController testController;
+   private  TestController testController;
 
-   @Test
-   @Scheduled
-    public void list(){
+  @Test
+  @Scheduled
+   public void list(){
 
-       String url="http://localhost:8080/list";
+     String url="http://localhost:8080/list";
        CloseableHttpClient httpClient= HttpClients.createDefault();
 
        try {
            CloseableHttpResponse response=httpClient.execute(new HttpGet(url));
            String pageInfo=EntityUtils.toString(response.getEntity());
            //将pageinfo里面的数据转换为json对象格式
-           JSONObject datas=JSONObject.parseObject(pageInfo);
-           int code = (int) datas.get("code");
-           if(code==0){
-               //将json对象数据中的data先转成字符串   再转成json对象使用
+          JSONObject datas=JSONObject.parseObject(pageInfo);
+          int code = (int) datas.get("code");
+          if(code==0){
+              //将json对象数据中的data先转成字符串   再转成json对象使用
                JSONObject data=JSONObject.parseObject(datas.get("data").toString());
                JSONArray list=JSONObject.parseArray(data.get("list").toString());
-               List<Goods> goodsList = JSONArray.parseArray(list.toJSONString(), Goods.class);
-               System.out.println(goodsList);
-           }
+              List<Goods> goodsList = JSONArray.parseArray(list.toJSONString(), Goods.class);
+              System.out.println(goodsList);}
        } catch (IOException e) {
            e.printStackTrace();
        }
 
 
        TimerTask timerTask = new TimerTask() {
-           @Override
+          @Override
            public void run() {
 
-           }
-       };
+          }
+      };
    }
 
 
@@ -67,7 +66,7 @@ private TestService testService;
     public void Executor(){
        ExecutorService executorService = Executors.newCachedThreadPool();
        executorService.execute(new Runnable() {
-           @Override
+          @Override
            public void run() {
 
            }
@@ -78,7 +77,7 @@ private TestService testService;
    /* @Test
     List<Object> select() {
         List<Object> select = this.testService.select();
-        System.out.println(select);
-        return  select;
+      System.out.println(select);
+       return  select;
     }*/
 }
