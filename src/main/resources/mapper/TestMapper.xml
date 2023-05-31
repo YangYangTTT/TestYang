@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.test.testyangte.dao.TestMapper">
+<select id="Findbykey" resultType="com.example.test.testyangte.entity.Goods" >
+    select * from goods where goodsname like concat("%",#{searchKey},"%") LIMIT #{start},#{end}
+</select>
+
+<select id="loadList"  resultType="com.example.test.testyangte.entity.Goods" >
+    SELECT g.`goodsid`,g.`goodsname`,g.`price`,g.`status`,g.`stock`,g.`createtime`,g.`updatetime`,g.`spike`
+    FROM goods g
+    LIMIT #{start},#{end}
+    </select>
+
+    <delete id="delete" parameterType="Integer" >
+        DELETE FROM goods g WHERE g.goodsid=#{id}
+    </delete>
+
+    <select id="deleteInBatch" parameterType="int[]" resultType="java.lang.Integer">
+        DELETE FROM goods g WHERE g.goodsid IN
+        <foreach collection="array" open="("  separator="," close=")" item="id">
+            #{id}
+        </foreach>
+    </select>
+
+    <insert id="input" parameterType="com.example.test.testyangte.entity.SaleDetail" >
+        INSERT INTO goods VALUES (3, 'iPhone XS Max', 1.01, 1, 10, '2019-03-29 14:40:00', '2019-06-22 18:28:32', 1);
+    </insert>
+
+    <update id="update" parameterType="com.example.test.testyangte.entity.SaleDetail">
+        UPDATE goods s SET s.`goodsname`='bbb' WHERE s.`goodsid`=2
+    </update>
+
+<select id="select" resultType="java.util.Map">
+    SELECT g.goodsname,g.goodsid,g.price,o.createtime
+    FROM goods g INNER JOIN orders o
+            ON g.goodsid=o.goodsid
+    </select>
+</mapper>

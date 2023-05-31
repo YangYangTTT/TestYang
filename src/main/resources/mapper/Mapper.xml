@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.test.testyangte.dao.">
+    <resultMap id="rm1" type="com.example.test.testyangte.entity.SaleDetail">
+        <id column="saleNo" property="saleNo"></id>
+        <result column="goodsNo" property="goodsNo"></result>
+        <result column="number" property="number"></result>
+        <result column="subTotal" property="subTotal"></result>
+        <association property="good" javaType="com.example.test.testyangte.entity.Good">
+            <id column="id" property="id"></id>
+            <result column="name" property="name"></result>
+            <result column="price" property="price"></result>
+        </association>
+    </resultMap>
+<select id="loadList"  resultMap="rm1">
+    SELECT s.`saleNo`,s.`goodsNo`,s.`number`,s.`subTotal`,g.`id`,g.`name`,g.`price`
+    FROM goods g LEFT JOIN saledetail s ON(g.`id`=s.`goodsNo`)
+    </select>
+
+<insert id="inputgoods"  parameterType="com.example.test.testyangte.entity.SaleDetail">
+    INSERT INTO goods (id,NAME,price)
+    VALUES(#{id},#{name},#{price})
+    </insert>
+<insert id="inputsale"   parameterType="com.example.test.testyangte.entity.SaleDetail">
+    INSERT INTO saledetail (saleNo,goodsNo,number,subTotal)
+    VALUES(#{saleNo}, #{goodsNo}#{number},#{subTotal})
+    </insert>
+
+<delete id="deletegoods" parameterType="Integer">
+    DELETE FROM goods g WHERE g.`id`=#{id}
+    </delete>
+<delete id="deletesale"  parameterType="Integer">
+    DELETE FROM saledetail s WHERE s.`goodsNo`=#{saleNo}
+    </delete>
+
+    <select id="count" resultType="com.example.test.testyangte.entity.Count">
+        SELECT g.`name`,COUNT(s.`number`)count
+        FROM saledetail S LEFT JOIN goods g ON(s.`goodsNo`=g.`id`)
+        WHERE g.`price`>1000
+    </select>
+
+
+
+
+
+</mapper>
